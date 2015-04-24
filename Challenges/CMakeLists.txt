@@ -10,19 +10,19 @@ set (EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin")
 set (LIBRARY_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/lib" )
 
 # add source subdirectory
-#add_subdirectory (src)
+add_subdirectory (src)
 
 # set compiler flags
 set (WFLAGS "-Wall -Wextra -Wpedantic")
 set (STDFLAG "-std=c++11")
-set (CMAKE_CXX_FLAGS "${STDFLAG} ${WFLAGS}")
-set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
+#set (OPTFLAGS "-O3")
+set (CMAKE_CXX_FLAGS "${STDFLAG} ${WFLAGS} ${OPTFLAGS}")
 
 
 #set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
 
 # add the executable
-add_executable (mainTest "src/main.cpp")
+add_executable (mainMesh "src/mainMesh.cpp")
 #target_link_libraries (mainMesh2D  ${EXTRA_LIBS})
 
 # enable testing
