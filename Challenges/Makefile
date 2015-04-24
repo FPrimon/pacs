@@ -12,8 +12,8 @@ compile: build
 build: $(BUILDdir)/build
 
 $(BUILDdir)/build: CMakeLists.txt ./**/CMakeLists.txt
-	@ ln -s -f ../Examples/include/ include2
-	@ ln -s -f ../Examples/lib/ lib2
+	@ ln -s -f -n ../Examples/include/ include2
+	@ ln -s -f -n ../Examples/lib/ lib2
 	@ mkdir -p $(BUILDdir)
 	@ echo "Running cmake..."
 	@ cd $(BUILDdir) && cmake ..
