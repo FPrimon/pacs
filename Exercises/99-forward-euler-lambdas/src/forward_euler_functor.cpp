@@ -1,6 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <limits>
+
+template<typename T>
+void setMaxPrecison (std::ostream & out)
+{
+  auto maxprec = std::numeric_limits<T>::digits10;
+  out.precision (maxprec + 1);
+}
 
 template<typename real>
 class 
@@ -95,13 +103,15 @@ int main (void)
   forward_euler<double> f (0.0, 100.0, .1, 1e-3);
   f.apply (fcn, 10, x, t);
 
+  setMaxPrecison<double> (std::cout);
   std::cout << "r = [" << std::endl;
-  for (auto ii = x.begin (), 
-         jj = t.begin (); 
-       ii != x.end () && jj != t.end (); 
+  for (auto ii = x.begin (),  jj = t.begin (); 
+       ii != x.end () || jj != t.end (); 
        ++ii, ++jj)
-
-    std::cout << *jj << ",\t " << *ii << std::endl;
+    {
+      std::cout << *jj << ",\t " << *ii << std::endl;
+    }
+  
   std::cout << "];" << std::endl;
 
   return 0;

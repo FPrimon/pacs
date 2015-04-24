@@ -6,7 +6,7 @@
 namespace LinearAlgebra {
   
   MyMat0::MyMat0(size_type n, size_type m, StoragePolicySwitch sPolicy):
-    nr(n), nc(m), data(0),myPolicy(sPolicy)
+    nr(n), nc(m), data(new double[n*m]),myPolicy(sPolicy)
   {
     switch (this->myPolicy)
       {
@@ -18,7 +18,6 @@ namespace LinearAlgebra {
 	break;
       }
     // initialize to zero
-    data = new double[n*m];
     for(size_type i=0;i<nc*nr;++i) data[i]=0.0;
   }
   
@@ -26,33 +25,48 @@ namespace LinearAlgebra {
     nr(mat.nr), nc(mat.nc),myPolicy(mat.myPolicy)
   {
     // release old data
-    delete[] data;
     // get new data storage and copy
     if (nr*nc >0){
-	data = new double[nr*nc];
-	for(size_type i=0;i<nr*nc;++i)data[i]=mat.data[i];
+      data.reset(new double[nr*nc]);
+      for(size_type i=0;i<nr*nc;++i)data[i]=mat.data[i];
     }
     else
-      data=0; //set to null pointer!
+      data.release(); //set to null pointer!
   }
   
+  MyMat0::MyMat0(MyMat0&& mat):
+    nr(std::move(mat.nr)), nc(std::move(mat.nc)),
+    data(std::move(mat.data)),myPolicy(std::move(mat.myPolicy))
+  {
+    // Set the input matrix to the zero matrix
+    mat.nr=mat.nc=0;
+  }
+
   MyMat0 & MyMat0::operator = (MyMat0 const & rhs){
+    myPolicy=rhs.myPolicy;
     bool changed=(nc*nr)!=(rhs.nc*rhs.nr);
     nc=rhs.nc;
     nr=rhs.nr;
     // Avoid useless memory management
     // if not necessary
     if (changed){
-      delete[] data;
       if (nc*nr==0)
-	data =0;
+	data.release();
       else
-	data = new double[nc*nr];
+	data.reset(new double[nc*nr]);
     }
     for(size_type i=0;i<nr*nc;++i)data[i]=rhs.data[i];
     return *this;
   }
  
+  MyMat0 & MyMat0::operator = (MyMat0&& rhs){
+    myPolicy=std::move(rhs.myPolicy);
+    nc=std::move(rhs.nc);
+    nr=std::move(rhs.nr);
+    data=std::move(rhs.data);
+    rhs.nr=rhs.nc=0;
+    return *this;
+  }
 
   size_type MyMat0::rowMajorPolicy(size_type const & i, 
 				   size_type const & j) const{
@@ -67,7 +81,7 @@ namespace LinearAlgebra {
   double  MyMat0::getValue(size_type const i, size_type const j) const
   {
     // todo : this test should be hidden in a private method
-    if  (i<0 || i>=nr || j<0 || i<=nc)
+    if  (i>=nr || i<=nc)
       {
 	// todo this way of handling errors could be bettered
 	// using exceptions
@@ -80,7 +94,7 @@ namespace LinearAlgebra {
   
   void  MyMat0::setValue(size_type const i, size_type const j, double const & v)
   {
-    if  (i<0 || i>=nr || j<0 || i<=nc)
+    if  (i>=nr || i<=nc)
       {
 	std::cerr<<" Out of bounds";
 	std::exit(1);
@@ -93,16 +107,15 @@ namespace LinearAlgebra {
   {
     if(n*m != nc*nr)      
       {
-	// clear data storage
-	delete[] data;
 	if(n*m != 0)
 	  {
-	    data=new double[n*m];
+	    // reset data storage
+	    data.reset(new double[n*m]);
 	    //! Set to zero
 	    for (size_type i =0;i<n*m;++i)data[i]=0.0;
 	  }
 	else
-	  data=0; // set to null pointer
+	  data.release(); // set to null pointer
       }
     //! fix number of rows and column
     nr=n;
