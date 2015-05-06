@@ -35,8 +35,11 @@ namespace LinearAlgebra{
    * It stores a matrix of double entries, allowing different type of
    * storage through an internal policy. The policy is implemented via
    * a pointer to function selected at construction time.
+   * The class is declared final since it does not have a virtual destructor
+   * and thus it will be very unsafe to derive from it.
    */
-  class MyMat0{
+  class MyMat0 final
+  {
   private:
     size_type nr,nc;
     //! Data storage
@@ -104,6 +107,7 @@ namespace LinearAlgebra{
     /*!
       I need a destructor for memory management.
       The synthetic one is enough since I am using smart pointers!
+      Make it virtual if you want to derive (then take out final)
      */
     ~MyMat0()=default;
     //! Resizing the matrix
@@ -147,11 +151,11 @@ namespace LinearAlgebra{
     inline StoragePolicySwitch getStoragePolicy()const {
     	return myPolicy;}
     //! Computes \f$ ||A||_\infty \f$
-    const double normInf() const;
+    double normInf() const;
     //! Computes \f$ ||A||_1 \f$
-    const double norm1() const;
+    double norm1() const;
     //! Computes Frobenious norm
-    const double normF() const;
+    double normF() const;
     //! An example of matrix times vector
     /*!
      * It checks for consistency: the size of the vector must be equal

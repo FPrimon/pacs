@@ -25,12 +25,13 @@ int main()
   std::cout<<"Area: "<<aTriangle.area()<<std::endl;
   //! Unit Square
   //C++11 syntax. I expoit the fact that the is an implicit conversion
-  //between initializer lists and pairs and Point2d has a constructor taking a pair<double>
+  //between initializer lists with two double and a Point2d, since the latter has a  constructor taking two doubles
   //as argument 
   // In C++98 I would have written
   //Square aSquare(Point2D(0.0,0.0),1.0); 
   Square aSquare({0.0,0.0},1.0);
-  p_ab=&aSquare; 
+  Square s2(aSquare); 
+  p_ab=&s2;
   p_ab->showMe();
   std::cout<<"Area: "<<aSquare.area()<<std::endl;
 }

@@ -40,7 +40,7 @@ EXEC=$(exe_sources:.cpp=)
 #========================== ORA LA DEFINIZIONE DEGLI OBIETTIVI
 .phony= all clean distclean doc
 
-.DEFAULT_GOAL = all
+.DEFAULT_GOAL = default
 
 all: $(DEPEND) $(EXEC)
 
